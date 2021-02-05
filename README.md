@@ -14,6 +14,7 @@ To create a temporary container:
 ```
 docker run --rm -p 3838:3838 devaneyje/vizlearn
 ```
+The app UI can now be accessed with a web browser at `localhost:3838`.
 
 ### Using GitHub Repository
 This repo may see updates with configuration files to simplify the installation of this container. Currently, the simplest way to use this container is to view instructions at the top of this file. To build the image from the Dockerfile in the repository, follow the guide below. 
@@ -31,7 +32,7 @@ Once complete, the image will be listed under `docker images`. A temporary conta
 ```
 docker run --rm -p 3838:3838 vizlearn:latest
 ```
-The app UI can be accessed by navigating to `localhost:3838` in your web browser.
+The app UI can be accessed by navigating to `localhost:3838` in a web browser.
 
 #### Continual Use
 If you would like to create a container to continually access, the previous `docker run` command can be adjusted as follows.
