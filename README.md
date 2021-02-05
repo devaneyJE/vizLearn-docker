@@ -22,7 +22,7 @@ docker run --rm -p 3838:3838 vizlearn:latest
 The app UI can be accessed by navigating to `localhost:3838` in your web browser.
 
 #### Continual Use
-If you would like to create a container to continually access, the previous `run` command can be adjusted as follows.
+If you would like to create a container to continually access, the previous `docker run` command can be adjusted as follows.
 ```
 docker run -p 3838:3838 vizlearn:latest
 ```
