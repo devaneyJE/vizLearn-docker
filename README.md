@@ -3,8 +3,20 @@ This project was intended to Dockerize an updated version of a Shiny app used to
 
 The vizLearn project is based on the work previously done as part of my undergraduate thesis. The paper discussing data science education and R Shiny apps for data visualization can be found in [this repository](https://github.com/devaneyJE/tidyTouch_thesis).
 
-### Using this Repository
-This repo may see updates with configuration files to simplify the installation of this container. Currently, the simplest way to use this container is to view instructions on [DockerHub](https://hub.docker.com/r/devaneyje/vizlearn). To build the image from the Dockerfile in the repository, follow the guide below. 
+### General Usage
+To create a persistent container for continual use:
+```
+docker run -p 3838:3838 devaneyje/vizlearn
+```
+See section on [continual use](#Continual-Use) for more.
+
+To create a temporary container:
+```
+docker run --rm -p 3838:3838 devaneyje/vizlearn
+```
+
+### Using GitHub Repository
+This repo may see updates with configuration files to simplify the installation of this container. Currently, the simplest way to use this container is to view instructions at the top of this file. To build the image from the Dockerfile in the repository, follow the guide below. 
 
 #### Building Image from Repository
 To access the necessary files, clone the repo to your local machine.
