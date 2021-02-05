@@ -19,5 +19,8 @@ RUN chmod -R +r /srv/shiny-server/
 # expose port
 EXPOSE 3838
 
+# chsh
+SHELL ["/bin/bash", "-c"]
+
 # run app at start
-RUN /bin/bash -c "R -e shiny::runApp('/srv/shiny-server/vizLearn.R', host='0.0.0.0', port=3838)"
+CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/vizLearn.R', host='0.0.0.0', port=3838)"]
