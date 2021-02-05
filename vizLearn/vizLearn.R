@@ -310,6 +310,9 @@ server <- function(input, output) {
         if(input$facet.check == F){
           NULL
         }
+        else if(input$facet == "None"){
+          NULL
+        }
         else if(input$facet == "Wrap"){
             req(input$facet.var2 != "None")
             facet_wrap(as.formula(paste("~", input$facet.var2)))
@@ -325,6 +328,31 @@ server <- function(input, output) {
         else if(input$facet == "Grid"){
             req(input$facet.var1 != "None" && input$facet.var2 != "None")
             facet_grid(as.formula(paste(input$facet.var1, "~", input$facet.var2)))
+        }
+    })
+    
+    facet_string <- reactive({
+        if(input$facet.check == F){
+          NULL
+        }
+        else if(input$facet == "None"){
+          NULL
+        }
+        else if(input$facet == "Wrap"){
+            req(input$facet.var2 != "None")
+            paste("facet_wrap(~", input$facet.var2, ")", sep = "")
+        }
+        else if(input$facet == "Columns"){
+            req(input$facet.var2 != "None")
+            paste("facet_grid(~", input$facet.var2, ")", sep = "")
+        }
+        else if(input$facet == "Rows"){
+            req(input$facet.var1 != "None")
+            paste("facet_grid(~", input$facet.var1, ")", sep = "")
+        }
+        else if(input$facet == "Grid"){
+            req(input$facet.var1 != "None" && input$facet.var2 != "None")
+            paste("facet_grid(", input$facet.var1, "~", input$facet.var2, ")", sep = "")
         }
     })
     
@@ -404,7 +432,7 @@ server <- function(input, output) {
         ac <- c(ac, "Linetype")
       }else{ac}
       if(input$geom == "Bar" || input$geom == "Point"){
-        ac <- c(ac, "Position")
+        ac <- c(ac, "Shape")
       }else{ac}
     })
     
@@ -719,18 +747,21 @@ server <- function(input, output) {
       if(!is.null(position_reac())){
         al <- c(al, position = position_reac())
       }else{al <- al}
+      if(!is.null(shape_reac())){
+        al <- c(al, shape = shape_reac())
+      }else{al <- al}
       as.list(al)
     })
     
     geom_fun_str <- reactive({
-      as.list(c(color = color_reac(), alpha = alpha_reac(), fill = fill_reac(), size = size_reac(), linetype = linetype_reac(), position = position_reac()))
+      as.list(c(color = color_reac(), alpha = alpha_reac(), fill = fill_reac(), size = size_reac(), linetype = linetype_reac(), position = position_reac(), shape = shape_reac()))
     })
     geom_fun_list <- reactive({
       as.list(c())
     })
     
     geom_reac <- reactive({
-      geom_fun <- function(color = NULL, alpha = NULL, fill = NULL, size = NULL, linetype = NULL, position = NULL){
+      geom_fun <- function(color = NULL, alpha = NULL, fill = NULL, size = NULL, linetype = NULL, position = NULL, shape = NULL){
           if(input$geom == "Choose Geometry"){
             NULL
           }
@@ -799,6 +830,24 @@ server <- function(input, output) {
     })
     
     #----------------------code
+    data_code <- reactive({
+      if(input$data.source != "Choose Source" && input$data.source != "Import Dataset"){
+        paste(input$data.source, " %>% ", sep = "")
+      }
+      else{
+        paste("<data_object>", " %>% ", sep = "")
+      }
+    })
+    
+    ggplot_code_str <- reactive({
+      if(input$single.var.check==F){
+        paste("ggplot(aes(y=", y_var(), ", x=", x_var(), "))", sep = "")
+      }
+      else if(input$single.var.check==T){
+        paste("ggplot(aes(y=", y_var(), "))", sep = "")
+      }else{NULL}
+    })
+    
     chosen_geom_func <- reactive({
       if(input$geom == "Choose Geometry"){
         NULL
@@ -861,6 +910,9 @@ server <- function(input, output) {
       else if(!is.null(position_reac())){
         geom_arg_str <- paste(geom_arg_str, stringr::str_extract(deparse(substitute(position_reac())), "^.*?(?=_)"), "=", position_reac(), sep='')
       }
+      else if(!is.null(shape_reac())){
+        geom_arg_str <- paste(geom_arg_str, stringr::str_extract(deparse(substitute(shape_reac())), "^.*?(?=_)"), "=", shape_reac(), sep='')
+      }
       else{geom_arg_str <- NULL}
       geom_arg_str
     })
@@ -903,20 +955,29 @@ server <- function(input, output) {
       }
     })
     
-    ggplot_code_str <- reactive({
-      if(input$single.var.check==F){
-        paste("<plot_data> %>% ggplot(aes(y=", y_var(), ", x=", x_var(), "))", sep = "")
+    facet_code <- reactive({
+      if(is.null(facet_string())){
+        NULL
       }
-      else if(input$single.var.check==T){
-        paste("<plot_data> %>% ggplot(aes(y=", y_var(), "))", sep = "")
-      }else{NULL}
+      else{
+        paste(" + ", facet_string(), sep = "")
+      }
+    })
+    
+    theme_code <- reactive({
+      if(is.null(theme_reac())){
+        NULL
+      }
+      else{
+        paste(" + ", input$theme, "()", sep = "")
+      }
     })
     
     code_reac <- reactive({
-      code_combo <- function(ggplot_code_str=NULL, geom_func_code=NULL, labs_code=NULL){
-        paste(ggplot_code_str, geom_func_code, labs_code, sep = "")
+      code_combo <- function(data_code=NULL, ggplot_code_str=NULL, geom_func_code=NULL, labs_code=NULL, facet_code=NULL, theme_code=NULL){
+        paste(data_code, ggplot_code_str, geom_func_code, labs_code, facet_code, theme_code, sep = "")
       }
-      code_elemets <- list(ggplot_code_str(), geom_func_code(), labs_code())
+      code_elemets <- list(data_code(), ggplot_code_str(), geom_func_code(), labs_code(), facet_code(), theme_code())
       do.call(code_combo, code_elemets)
     })
     
