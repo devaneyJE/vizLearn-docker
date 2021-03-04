@@ -78,65 +78,65 @@ server <- function(input, output) {
       }
     })
     
-    #----------------------manipulation
-    
-    output$tr.fun_select <- renderUI({
-      req(input$data.source != "Choose Source")
-        checkboxInput("tr.fun",
-                    "Filter by Value"
-        )
-    })
-
-    #filter
-    output$tr.filter <- renderUI({
-        req(input$tr.fun == T)
-        fluidRow(
-            column(width = 4,
-                selectInput("filter.var", "Variable",
-                            choices = c(names(initial.data()))
-                )
-            ),
-            column(width = 4,
-                selectInput("filter.operator", "Operator",
-                            choices = c("==", ">", ">=", "<", "<=") 
-                )
-            ),
-            column(width = 4,
-                numericInput("filter.value", "Value",
-                            value = 0)
-                )
-        )
-    })
-
-    filter_reac <- reactive({
-      data.filter <- initial.data()
-        if(is.null(input$tr.fun)){
-          data.filter
-        }
-        else if(input$tr.fun != "Filter Rows by Value"){
-          data.filter
-        }
-        else if(input$filter.operator == "=="){
-          data.filter <- data.filter %>% filter((!!as.name(input$filter.var))==input$filter.value)
-        }
-        else if(input$filter.operator == ">"){
-          data.filter <- data.filter %>% filter((!!as.name(input$filter.var))>input$filter.value)
-        }
-        else if(input$filter.operator == ">="){
-          data.filter <- data.filter %>% filter((!!as.name(input$filter.var))>=input$filter.value)
-        }
-        else if(input$filter.operator == "<"){
-          data.filter <- data.filter %>% filter((!!as.name(input$filter.var))<input$filter.value)
-        }
-        else if(input$filter.operator == "<="){
-          data.filter <- data.filter %>% filter((!!as.name(input$filter.var))<=input$filter.value)
-        }
-        data.filter
-    })
+    ##----------------------manipulation
+    #
+    #output$tr.fun_select <- renderUI({
+    #  req(input$data.source != "Choose Source")
+    #    checkboxInput("tr.fun",
+    #                "Filter by Value"
+    #    )
+    #})
+    #
+    ##filter
+    #output$tr.filter <- renderUI({
+    #    req(input$tr.fun == T)
+    #    fluidRow(
+    #        column(width = 4,
+    #            selectInput("filter.var", "Variable",
+    #                        choices = c(names(initial.data()))
+    #            )
+    #        ),
+    #        column(width = 4,
+    #            selectInput("filter.operator", "Operator",
+    #                        choices = c("==", ">", ">=", "<", "<=") 
+    #            )
+    #        ),
+    #        column(width = 4,
+    #            numericInput("filter.value", "Value",
+    #                        value = 0)
+    #            )
+    #    )
+    #})
+    #
+    #filter_reac <- reactive({
+    #  data.filter <- initial.data()
+    #    if(is.null(input$tr.fun)){
+    #      data.filter
+    #    }
+    #    else if(input$tr.fun != "Filter Rows by Value"){
+    #      data.filter
+    #    }
+    #    else if(input$filter.operator == "=="){
+    #      data.filter <- data.filter %>% filter((!!as.name(input$filter.var))==input$filter.value)
+    #    }
+    #    else if(input$filter.operator == ">"){
+    #      data.filter <- data.filter %>% filter((!!as.name(input$filter.var))>input$filter.value)
+    #    }
+    #    else if(input$filter.operator == ">="){
+    #      data.filter <- data.filter %>% filter((!!as.name(input$filter.var))>=input$filter.value)
+    #    }
+    #    else if(input$filter.operator == "<"){
+    #      data.filter <- data.filter %>% filter((!!as.name(input$filter.var))<input$filter.value)
+    #    }
+    #    else if(input$filter.operator == "<="){
+    #      data.filter <- data.filter %>% filter((!!as.name(input$filter.var))<=input$filter.value)
+    #    }
+    #    data.filter
+    #})
 
     #modified data object
     plot.data <- reactive({
-      filter_reac()
+      initial.data()
       })
     
     #data characteristics output
@@ -1027,10 +1027,10 @@ ui <- navbarPage(title = "vizLearn",
                                 reactableOutput("reac_table")
                              ),
                              
-                             tags$hr(),
-                             uiOutput("tr.fun_select"),
-                             tags$hr(),
-                             uiOutput("tr.filter"),
+                             tags$hr()
+                             #uiOutput("tr.fun_select"),
+                             #tags$hr(),
+                             #uiOutput("tr.filter"),
                          ) #close mainPanel
                      ) #close sidebarLayout
                  ), #close tabPanel for 'Data'
