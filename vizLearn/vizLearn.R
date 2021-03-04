@@ -89,7 +89,7 @@ server <- function(input, output) {
 
     #filter
     output$tr.filter <- renderUI({
-        req(input$tr.fun == 'Yes')
+        req(input$tr.fun == T)
         fluidRow(
             column(width = 4,
                 selectInput("filter.var", "Variable",
